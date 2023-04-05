@@ -25,6 +25,7 @@ jobs:
           key: npm-${{ runner.os }}-${{ hashFiles('package.json') }}
       - run: yarn
       - run: yarn run lint
+      - run: yarn run test
       - run: yarn run build
       - env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
