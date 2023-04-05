@@ -1,0 +1,102 @@
+{
+  "name": "cmyr-sign",
+  "version": "0.1.0",
+  "description": "草梅友仁设计的计算签名和校验签名的包",
+  "author": "CaoMeiYouRen",
+  "private": false,
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=14"
+  },
+  "scripts": {
+    "lint": "cross-env NODE_ENV=production eslint src --fix --ext .ts,.js,.cjs,.mjs",
+    "release": "semantic-release",
+    "prebuild": "rimraf dist",
+    "build": "cross-env NODE_ENV=production rollup -c",
+    "analyzer": "cross-env NODE_ENV=production ANALYZER=true rollup -c",
+    "dev": "cross-env NODE_ENV=development ts-node-dev src/index.ts",
+    "dev:rollup": "cross-env NODE_ENV=development rollup -c -w",
+    "rm": "rimraf node_modules",
+    "start": "node ./dist/index",
+    "commit": "cz",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.5.1",
+    "@commitlint/config-conventional": "^17.4.4",
+    "@rollup/plugin-commonjs": "^24.0.1",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.2",
+    "@rollup/plugin-replace": "^5.0.2",
+    "@rollup/plugin-terser": "^0.4.0",
+    "@rollup/plugin-typescript": "^11.1.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@types/debug": "^4.1.7",
+    "@types/md5": "^2.3.2",
+    "@types/node": "^18.15.11",
+    "@typescript-eslint/eslint-plugin": "^5.57.1",
+    "@typescript-eslint/parser": "^5.57.1",
+    "commitizen": "^4.3.0",
+    "conventional-changelog-cli": "^2.2.2",
+    "conventional-changelog-cmyr-config": "^2.1.0",
+    "cross-env": "^7.0.3",
+    "cz-conventional-changelog": "^3.3.0",
+    "cz-conventional-changelog-cmyr": "^1.0.0",
+    "debug": "^4.3.4",
+    "eslint": "^8.37.0",
+    "eslint-config-cmyr": "^1.1.28",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.0",
+    "rimraf": "^4.4.1",
+    "rollup": "^3.20.2",
+    "rollup-plugin-analyzer": "^4.0.0",
+    "rollup-plugin-dts": "^5.3.0",
+    "semantic-release": "^19.0.5",
+    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.0.3"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog-cmyr"
+    }
+  },
+  "changelog": {
+    "language": "zh"
+  },
+  "lint-staged": {
+    "*.{js,ts}": [
+      "npm run lint",
+      "git add"
+    ]
+  },
+  "keywords": [],
+  "homepage": "https://github.com/CaoMeiYouRen/cmyr-sign#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CaoMeiYouRen/cmyr-sign.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CaoMeiYouRen/cmyr-sign/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "md5": "^2.3.0",
+    "tslib": "^2.5.0"
+  }
+}
