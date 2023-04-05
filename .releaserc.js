@@ -1,5 +1,6 @@
 const { name } = require('./package.json')
 module.exports = {
+    repositoryUrl: 'https://github.com/CaoMeiYouRen/cmyr-sign',
     plugins: [
         [
             "@semantic-release/commit-analyzer",
