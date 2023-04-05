@@ -1,6 +1,6 @@
 {
   "name": "cmyr-sign",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "草梅友仁设计的计算签名和校验签名的包",
   "author": "CaoMeiYouRen",
   "private": false,
