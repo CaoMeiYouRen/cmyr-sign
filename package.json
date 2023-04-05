@@ -72,7 +72,7 @@
     "rollup": "^3.20.2",
     "rollup-plugin-analyzer": "^4.0.0",
     "rollup-plugin-dts": "^5.3.0",
-    "semantic-release": "19.0.5",
+    "semantic-release": "^21.0.1",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
@@ -94,10 +94,6 @@
   },
   "keywords": [],
   "homepage": "https://github.com/CaoMeiYouRen/cmyr-sign#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/CaoMeiYouRen/cmyr-sign.git"
-  },
   "bugs": {
     "url": "https://github.com/CaoMeiYouRen/cmyr-sign/issues"
   },
