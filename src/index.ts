@@ -1,7 +1,7 @@
 import md5 from 'md5'
 import qs from 'qs'
 
-export const VERSION = '1.0'
+export const VERSION = '1.1'
 /**
  *  JavaScript 对象按照 key 的升序排列
  *
@@ -23,6 +23,40 @@ export function sortObjectKeys<T = Record<string, unknown>>(obj: T): T {
     return newObj as T
 }
 
+export type PrimitiveValues = string | number | boolean
+
+export type PrimitiveObject<T> = {
+    [K in keyof T as T[K] extends PrimitiveValues ? K : never]: T[K];
+}
+
+/**
+ * 返回一个新对象，该对象中只包含原始对象中的基础类型值（字符串、数字、布尔值）
+ *
+ * @author CaoMeiYouRen
+ * @date 2023-04-06
+ * @template T
+ * @param obj
+ */
+export function getPrimitiveValues<T = Record<string, unknown>>(obj: T) {
+    const result: any = {}
+    for (const key in obj) {
+        if (typeof obj[key] === 'string' || typeof obj[key] === 'number' || typeof obj[key] === 'boolean') {
+            result[key] = obj[key]
+        }
+    }
+    return result as PrimitiveObject<T>
+}
+
+export interface SignOption {
+    payload: Record<string, unknown>
+    signKey: string
+    timestamp?: number
+    /**
+     * 仅校验基础类型
+     */
+    primitiveOnly?: boolean
+}
+
 export interface SignResult {
     timestamp: number
     sign: string
@@ -40,8 +74,15 @@ export interface SignResult {
  * @param signKey
  * @param [timestamp=Date.now()]
  */
-export function getSign(payload: Record<string, unknown>, signKey: string, timestamp = Date.now()): SignResult {
-    const payloadStr = qs.stringify(sortObjectKeys(payload))
+export function getSign(option: SignOption): SignResult {
+    const { payload, signKey, timestamp = Date.now(), primitiveOnly = false } = option
+    let _payload = payload
+    if (primitiveOnly) {
+        _payload = getPrimitiveValues(_payload)
+    }
+    _payload = sortObjectKeys(_payload)
+    const payloadStr = qs.stringify(_payload)
+    // console.log('payloadStr', payloadStr, '_payload', _payload)
     const rawSign = `${timestamp}\n${payloadStr}\n${signKey}`
     const sign: string = md5(rawSign)
     return {
@@ -52,12 +93,17 @@ export function getSign(payload: Record<string, unknown>, signKey: string, times
     }
 }
 
-export interface SignConfig {
+export interface CheckSignOption {
+    sign: string
     timestamp: number
     payload: Record<string, unknown>
     signKey: string
     method?: string
-    version: string
+    version?: string
+    /**
+     * 仅校验基础类型
+     */
+    primitiveOnly?: boolean
 }
 
 /**
@@ -69,14 +115,14 @@ export interface SignConfig {
  * @param sign
  * @param data
  */
-export function checkSign(sign: string, data: SignConfig): boolean {
-    const { timestamp, payload, signKey, method = 'md5', version = VERSION } = data
+export function checkSign(data: CheckSignOption): boolean {
+    const { sign, timestamp, payload, signKey, method = 'md5', version = VERSION, primitiveOnly = false } = data
     if (method !== 'md5') {
         throw new Error('不支持的签名校验方法！')
     }
-    if (version !== '1.0') {
-        throw new Error('不支持的签名校验方法！')
+    if (version !== VERSION) {
+        throw new Error('不支持的签名校验版本！')
     }
-    const newSign = getSign(payload, signKey, timestamp)
+    const newSign = getSign({ payload, signKey, timestamp, primitiveOnly })
     return newSign.sign === sign
 }
