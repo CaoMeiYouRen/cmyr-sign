@@ -11,13 +11,21 @@ export const VERSION = '1.1'
  * @param obj
  */
 export function sortObjectKeys<T = Record<string, unknown>>(obj: T): T {
+    if (typeof obj !== 'object' || obj === null) { // 排除非 object 对象和 null
+        return obj
+    }
+    if (Array.isArray(obj)) {
+        obj.sort()
+        const newObj = obj.map((e) => sortObjectKeys(e))
+        return newObj as T
+    }
     // 获取对象的 key 列表并按照升序排序
     const keys = Object.keys(obj).sort()
     // 创建一个新的对象
     const newObj = {}
     // 遍历排序后的 key 列表，将 key 和 value 组成一个新的对象
     for (const key of keys) {
-        newObj[key] = obj[key]
+        newObj[key] = sortObjectKeys(obj[key]) // 递归排序
     }
     // 返回新的对象
     return newObj as T
@@ -47,6 +55,19 @@ export function getPrimitiveValues<T = Record<string, unknown>>(obj: T) {
     return result as PrimitiveObject<T>
 }
 
+/**
+ * 转换对象到查询字符串
+ *
+ * @author CaoMeiYouRen
+ * @date 2023-11-18
+ * @export
+ * @template T
+ * @param obj
+ */
+export function queryStringStringify<T = Record<string, unknown>>(obj: T) {
+    return qs.stringify(obj)
+}
+
 export interface SignOption {
     payload: Record<string, unknown>
     signKey: string
@@ -62,6 +83,14 @@ export interface SignResult {
     sign: string
     method: string
     version: string
+    /**
+     * 字符串化后的 payload
+     */
+    payloadStr: string
+    /**
+     * md5 前的数据
+     */
+    rawSign: string
 }
 
 /**
@@ -81,7 +110,7 @@ export function getSign(option: SignOption): SignResult {
         _payload = getPrimitiveValues(_payload)
     }
     _payload = sortObjectKeys(_payload)
-    const payloadStr = qs.stringify(_payload)
+    const payloadStr = queryStringStringify(_payload)
     // console.log('payloadStr', payloadStr, '_payload', _payload)
     const rawSign = `${timestamp}\n${payloadStr}\n${signKey}`
     const sign: string = md5(rawSign)
@@ -90,6 +119,8 @@ export function getSign(option: SignOption): SignResult {
         sign,
         method: 'md5',
         version: VERSION,
+        payloadStr,
+        rawSign,
     }
 }
 

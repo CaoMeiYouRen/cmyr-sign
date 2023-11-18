@@ -1,6 +1,5 @@
-import qs from 'qs'
 import md5 from 'md5'
-import { sortObjectKeys, getSign, checkSign, VERSION, getPrimitiveValues } from '../src'
+import { sortObjectKeys, getSign, checkSign, VERSION, getPrimitiveValues, queryStringStringify } from '../src'
 
 describe('校验sortObjectKeys', () => {
     test('应当按升序对对象键进行排序', () => {
@@ -66,6 +65,31 @@ describe('校验getPrimitiveValues', () => {
     })
 })
 
+describe('校验queryStringStringify', () => {
+    test('返回值类型应当正确', () => {
+        const input = { a: 1, b: 2 }
+        expect(queryStringStringify(input)).toEqual(expect.any(String))
+    })
+    test('返回值应当正确', () => {
+        const input = { a: 1, b: 2 }
+        const expected = 'a=1&b=2'
+        expect(queryStringStringify(input)).toEqual(expected)
+    })
+    test('应当支持字段的值为 object', () => {
+        const input = {
+            a: 1,
+            b: 'Anytown',
+            c: true,
+            d: {
+                age: 42,
+                name: 'John Doe',
+            },
+        }
+        const expected = 'a=1&b=Anytown&c=true&d%5Bage%5D=42&d%5Bname%5D=John%20Doe'
+        expect(queryStringStringify(input)).toEqual(expected)
+    })
+})
+
 describe('校验getSign', () => {
     test('返回值类型应当正确', () => {
         const payload = { a: 1, b: 2 }
@@ -76,6 +100,8 @@ describe('校验getSign', () => {
             sign: expect.any(String),
             method: 'md5',
             version: VERSION,
+            payloadStr: expect.any(String),
+            rawSign: expect.any(String),
         })
     })
 
@@ -100,6 +126,8 @@ describe('校验getSign', () => {
             sign: expect.any(String),
             method: 'md5',
             version: VERSION,
+            payloadStr: expect.any(String),
+            rawSign: expect.any(String),
         }
         expect(getSign(option)).toEqual(expected)
     })
@@ -117,7 +145,10 @@ describe('校验getSign', () => {
         const signKey = '123456'
         const timestamp = Date.now()
         const signResult = getSign({ payload, signKey, timestamp })
-        const payloadStr = qs.stringify(sortObjectKeys(payload))
+        const payloadStr = queryStringStringify(sortObjectKeys(payload))
+        // const params = new URLSearchParams(payload as any)
+        // params.sort()
+        // const payloadStr = params.toString()
         const rawSign = `${timestamp}\n${payloadStr}\n${signKey}`
         const expectedSign = md5(rawSign)
         expect(signResult.sign).toBe(expectedSign)
@@ -139,7 +170,10 @@ describe('校验getSign', () => {
             signKey: 'secret',
         }
         const result = getSign(option)
-        const payloadStr = qs.stringify(sortObjectKeys(option.payload))
+        const payloadStr = queryStringStringify(sortObjectKeys(option.payload))
+        // const params = new URLSearchParams(option.payload as any)
+        // params.sort()
+        // const payloadStr = params.toString()
         const rawSign = `${result.timestamp}\n${payloadStr}\n${option.signKey}`
         const expectedSign = md5(rawSign)
         expect(result.sign).toEqual(expectedSign)
@@ -183,7 +217,7 @@ describe('校验checkSign(仅校验基础类型)', () => {
             age: 42,
         }],
     }
-    const sign = '23e26f4d9e935569e16ef379952067b9'
+    const sign = 'b904198fa96065be814ad5d059cdb15c'
     const primitiveOnlySign = '489a09eec46a15e35bf168089c75919f'
     const data = { sign, signKey, timestamp, payload, version: VERSION }
     // console.log('sign1', getSign({ payload, signKey, timestamp, primitiveOnly: false }))
