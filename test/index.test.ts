@@ -22,11 +22,11 @@ describe('校验sortObjectKeys', () => {
 })
 
 describe('校验getPrimitiveValues', () => {
-    it('如果输入对象为空，则应返回一个空对象', () => {
+    test('如果输入对象为空，则应返回一个空对象', () => {
         expect(getPrimitiveValues({})).toEqual({})
     })
 
-    it('应返回仅具有基础类型值的对象', () => {
+    test('应返回仅具有基础类型值的对象', () => {
         const input = {
             name: 'John Doe',
             age: 42,
@@ -46,7 +46,7 @@ describe('校验getPrimitiveValues', () => {
         expect(getPrimitiveValues(input)).toEqual(expected)
     })
 
-    it('即使某些值为null或未定义，也应返回仅具有基础类型值的对象', () => {
+    test('即使某些值为null或未定义，也应返回仅具有基础类型值的对象', () => {
         const input = {
             name: null,
             age: undefined,
@@ -62,6 +62,49 @@ describe('校验getPrimitiveValues', () => {
             isMarried: true,
         }
         expect(getPrimitiveValues(input)).toEqual(expected)
+    })
+
+    test('应返回 Date 类型', () => {
+        const input = {
+            name: 'John Doe',
+            age: 42,
+            isMarried: true,
+            address: {
+                street: '123 Main St',
+                city: 'Anytown',
+                state: 'CA',
+                zip: 12345,
+            },
+            date: new Date(),
+        }
+        const expected = {
+            name: 'John Doe',
+            age: 42,
+            isMarried: true,
+            date: expect.any(Date),
+        }
+        expect(getPrimitiveValues(input)).toEqual(expected)
+    })
+
+    test('应不返回 Date 类型', () => {
+        const input = {
+            name: 'John Doe',
+            age: 42,
+            isMarried: true,
+            address: {
+                street: '123 Main St',
+                city: 'Anytown',
+                state: 'CA',
+                zip: 12345,
+            },
+            date: new Date(),
+        }
+        const expected = {
+            name: 'John Doe',
+            age: 42,
+            isMarried: true,
+        }
+        expect(getPrimitiveValues(input, true)).toEqual(expected)
     })
 })
 
@@ -88,6 +131,21 @@ describe('校验queryStringStringify', () => {
         const expected = 'a=1&b=Anytown&c=true&d%5Bage%5D=42&d%5Bname%5D=John%20Doe'
         expect(queryStringStringify(input)).toEqual(expected)
     })
+
+    test('应当支持字段的值为 Date', () => {
+        const input = {
+            a: 1,
+            b: 'Anytown',
+            c: true,
+            d: {
+                age: 42,
+                name: 'John Doe',
+            },
+            date: new Date('2023-01-01'),
+        }
+        const expected = 'a=1&b=Anytown&c=true&d%5Bage%5D=42&d%5Bname%5D=John%20Doe&date=2023-01-01T00%3A00%3A00.000Z'
+        expect(queryStringStringify(input)).toEqual(expected)
+    })
 })
 
 describe('校验getSign', () => {
@@ -105,7 +163,7 @@ describe('校验getSign', () => {
         })
     })
 
-    it('应仅返回带有基础类型值的签名结果', () => {
+    test('应仅返回带有基础类型值的签名结果', () => {
         const option = {
             payload: {
                 name: 'John Doe',
@@ -132,6 +190,30 @@ describe('校验getSign', () => {
         expect(getSign(option)).toEqual(expected)
     })
 
+    test('应当返回 Date 类型的签名结果', () => {
+        const option = {
+            payload: {
+                name: 'John Doe',
+                age: 42,
+                isMarried: true,
+                date: new Date('2023-01-01'),
+            },
+            timestamp: 1680708858558,
+            signKey: 'secret',
+            primitiveOnly: true,
+            excludeDate: false,
+        }
+        const expected = {
+            timestamp: expect.any(Number),
+            sign: 'c8e60b8552b169bca121bcb8b4da1c20',
+            method: 'md5',
+            version: VERSION,
+            payloadStr: 'age=42&date=2023-01-01T00%3A00%3A00.000Z&isMarried=true&name=John%20Doe',
+            rawSign: expect.any(String),
+        }
+        expect(getSign(option)).toEqual(expected)
+    })
+
     test('应当优先使用传入的时间戳', () => {
         const payload = { a: 1, b: 2 }
         const signKey = '123456'
@@ -146,15 +228,12 @@ describe('校验getSign', () => {
         const timestamp = Date.now()
         const signResult = getSign({ payload, signKey, timestamp })
         const payloadStr = queryStringStringify(sortObjectKeys(payload))
-        // const params = new URLSearchParams(payload as any)
-        // params.sort()
-        // const payloadStr = params.toString()
         const rawSign = `${timestamp}\n${payloadStr}\n${signKey}`
         const expectedSign = md5(rawSign)
         expect(signResult.sign).toBe(expectedSign)
     })
 
-    it('应返回带有排序键的签名结果', () => {
+    test('应返回带有排序键的签名结果', () => {
         const option = {
             payload: {
                 name: 'John Doe',
@@ -171,9 +250,6 @@ describe('校验getSign', () => {
         }
         const result = getSign(option)
         const payloadStr = queryStringStringify(sortObjectKeys(option.payload))
-        // const params = new URLSearchParams(option.payload as any)
-        // params.sort()
-        // const payloadStr = params.toString()
         const rawSign = `${result.timestamp}\n${payloadStr}\n${option.signKey}`
         const expectedSign = md5(rawSign)
         expect(result.sign).toEqual(expectedSign)

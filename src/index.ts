@@ -11,7 +11,7 @@ export const VERSION = '1.1'
  * @param obj
  */
 export function sortObjectKeys<T = Record<string, unknown>>(obj: T): T {
-    if (typeof obj !== 'object' || obj === null) { // 排除非 object 对象和 null
+    if (typeof obj !== 'object' || obj === null || obj instanceof Date) { // 排除非 object 对象、null、Date
         return obj
     }
     if (Array.isArray(obj)) {
@@ -41,14 +41,16 @@ export type PrimitiveObject<T> = {
  * 返回一个新对象，该对象中只包含原始对象中的基础类型值（字符串、数字、布尔值）
  *
  * @author CaoMeiYouRen
- * @date 2023-04-06
+ * @date 2023-11-18
+ * @export
  * @template T
  * @param obj
+ * @param [excludeDate=false] 是否排除 Date 类型，默认将 Date 也返回
  */
-export function getPrimitiveValues<T = Record<string, unknown>>(obj: T) {
+export function getPrimitiveValues<T = Record<string, unknown>>(obj: T, excludeDate: boolean = false) {
     const result: any = {}
     for (const key in obj) {
-        if (typeof obj[key] === 'string' || typeof obj[key] === 'number' || typeof obj[key] === 'boolean') {
+        if (typeof obj[key] === 'string' || typeof obj[key] === 'number' || typeof obj[key] === 'boolean' || !excludeDate && obj[key] instanceof Date) {
             result[key] = obj[key]
         }
     }
@@ -76,6 +78,10 @@ export interface SignOption {
      * 仅校验基础类型
      */
     primitiveOnly?: boolean
+    /**
+     * 是否排除 Date 类型
+     */
+    excludeDate?: boolean
 }
 
 export interface SignResult {
@@ -104,10 +110,10 @@ export interface SignResult {
  * @param [timestamp=Date.now()]
  */
 export function getSign(option: SignOption): SignResult {
-    const { payload, signKey, timestamp = Date.now(), primitiveOnly = false } = option
+    const { payload, signKey, timestamp = Date.now(), primitiveOnly = false, excludeDate = false } = option
     let _payload = payload
     if (primitiveOnly) {
-        _payload = getPrimitiveValues(_payload)
+        _payload = getPrimitiveValues(_payload, excludeDate)
     }
     _payload = sortObjectKeys(_payload)
     const payloadStr = queryStringStringify(_payload)
