@@ -45,6 +45,7 @@ function getPlugins({ isBrowser = false, isMin = false, isDeclaration = false })
             target: 'es2019', // node >= 12
             declaration: isDeclaration,
             sourceMap,
+            allowSyntheticDefaultImports: true,
         }),
     )
     plugins.push(
