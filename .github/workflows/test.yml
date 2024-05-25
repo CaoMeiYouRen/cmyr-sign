@@ -32,3 +32,9 @@ jobs:
       - run: pnpm i --fix-lockfile
       - run: pnpm run lint
       - run: pnpm run build
+      - run: pnpm run test
+      - run: pnpm run test:cov
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

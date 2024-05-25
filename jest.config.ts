@@ -1,9 +1,10 @@
 import { Config } from 'jest'
+import path from 'path'
 
 export default {
     preset: 'ts-jest',
     clearMocks: true,
-    coverageDirectory: 'coverage',
+    coverageDirectory: path.resolve('./coverage'),
     testEnvironment: 'node',
     moduleFileExtensions: ['ts', 'js', 'json', 'mjs', 'cjs'],
     moduleDirectories: ['node_modules', 'src'],
