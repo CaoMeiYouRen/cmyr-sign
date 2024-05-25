@@ -6,6 +6,9 @@
   <a href="https://github.com/CaoMeiYouRen/cmyr-sign/actions?query=workflow%3ARelease" target="_blank">
     <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/CaoMeiYouRen/cmyr-sign/release.yml?branch=master">
   </a>
+  <a href="https://app.codecov.io/gh/CaoMeiYouRen/cmyr-sign" target="_blank">
+     <img alt="Codecov" src="https://img.shields.io/codecov/c/github/CaoMeiYouRen/cmyr-sign">
+  </a>
   <img src="https://img.shields.io/badge/node-%3E%3D14-blue.svg" />
   <a href="https://github.com/CaoMeiYouRen/cmyr-sign#readme" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
