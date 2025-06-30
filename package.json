@@ -56,7 +56,7 @@
     "@types/node": "^22.0.0",
     "@types/qs": "^6.9.7",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
-    "@typescript-eslint/parser": "^8.22.0",
+    "@typescript-eslint/parser": "^5.62.0",
     "commitizen": "^4.3.0",
     "conventional-changelog-cli": "^5.0.0",
     "conventional-changelog-cmyr-config": "^2.1.0",
