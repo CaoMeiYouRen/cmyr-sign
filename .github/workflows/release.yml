@@ -4,38 +4,43 @@ on:
     branches:
       - master
   workflow_dispatch:
+# 仅取消针对当前工作流正在进行的作业或运行
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  id-token: write # Required for OIDC
+  packages: write
+  contents: write
+  issues: write
+  pull-requests: write
+
 jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
           version: "latest"
       - name: Setup Node.js environment
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
           node-version: "lts/*"
-      - name: Cache Dependency
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.npm
-            ~/.yarn
-            ~/.cache/pnpm
-            ~/cache
-            !~/cache/exclude
-            **/node_modules
-          key: pnpm-${{ runner.os }}-${{ hashFiles('package.json') }}
-          restore-keys: pnpm-${{ runner.os }}
+          registry-url: "https://registry.npmjs.org"
+      # Ensure npm 11.5.1 or later is installed
+      - name: Update npm
+        run: npm install -g npm@latest
       - run: pnpm i --fix-lockfile
       - run: pnpm run lint
       - run: pnpm run build
+      - run: pnpm run test
       - env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm run release
