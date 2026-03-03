@@ -1,5 +1,12 @@
 # cmyr-sign
 
+## [1.1.3](https://github.com/CaoMeiYouRen/cmyr-sign/compare/v1.1.2...v1.1.3) (2026-03-03)
+
+
+### 🐛 Bug 修复
+
+* 更新 package.json 配置，添加 tsdown 和 vitest 配置文件 ([4d3eb64](https://github.com/CaoMeiYouRen/cmyr-sign/commit/4d3eb64))
+
 ## [1.1.2](https://github.com/CaoMeiYouRen/cmyr-sign/compare/v1.1.1...v1.1.2) (2023-11-18)
 
 
