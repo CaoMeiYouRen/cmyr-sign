@@ -32,7 +32,7 @@
     "rm": "rimraf node_modules",
     "start": "node ./dist/index.cjs",
     "commit": "cz",
-    "prepare": "husky install",
+    "prepare": "husky",
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
     "test:watch": "vitest"
@@ -76,6 +76,10 @@
     ]
   },
   "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CaoMeiYouRen/cmyr-sign.git"
+  },
   "homepage": "https://github.com/CaoMeiYouRen/cmyr-sign#readme",
   "bugs": {
     "url": "https://github.com/CaoMeiYouRen/cmyr-sign/issues"
