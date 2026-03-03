@@ -9,7 +9,7 @@
   <a href="https://app.codecov.io/gh/CaoMeiYouRen/cmyr-sign" target="_blank">
      <img alt="Codecov" src="https://img.shields.io/codecov/c/github/CaoMeiYouRen/cmyr-sign">
   </a>
-  <img src="https://img.shields.io/badge/node-%3E%3D14-blue.svg" />
+  <img src="https://img.shields.io/badge/node-%3E%3D18-blue.svg" />
   <a href="https://github.com/CaoMeiYouRen/cmyr-sign#readme" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
@@ -37,7 +37,7 @@
 ## 依赖要求
 
 
-- node >=14
+- node >=18
 
 ## 安装
 

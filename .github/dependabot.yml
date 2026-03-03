@@ -7,19 +7,6 @@ updates:
       interval: monthly
       time: "04:00"
       timezone: Asia/Shanghai
-    ignore:
-      - dependency-name: semantic-release
-        versions:
-          - ">= 21.0.1"
-      - dependency-name: "@commitlint/cli"
-        versions:
-          - ">= 19.0.0"
-      - dependency-name: "@commitlint/config-conventional"
-        versions:
-          - ">= 19.0.0"
-      - dependency-name: "eslint"
-        versions:
-          - ">= 9.0.0"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
