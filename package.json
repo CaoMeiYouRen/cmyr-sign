@@ -58,7 +58,7 @@
     "semantic-release-cmyr-config": "^1.0.1",
     "tsdown": "^0.20.3",
     "tsx": "^4.21.0",
-    "typescript": "5.9.3",
+    "typescript": "6.0.2",
     "vitest": "^4.0.18"
   },
   "config": {
