@@ -28,7 +28,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v6
         with:
-          version: "latest"
+          version: "11"
       - name: Setup Node.js environment
         uses: actions/setup-node@v6
         with:
@@ -37,7 +37,7 @@ jobs:
       # Ensure npm 11.5.1 or later is installed
       - name: Update npm
         run: npm install -g npm@latest
-      - run: pnpm i --fix-lockfile
+      - run: pnpm install --frozen-lockfile
       - run: pnpm run lint
       - run: pnpm run build
       - run: pnpm run test
